@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Login Page</title>
+    <!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
+</head>
+
+<body>
+    <h1>Login</h1>
+
+    <!-- Display login error if there is one -->
+    <div th:if="${param.error}" style="color: red;">
+        Invalid username or password. Please try again.
+    </div>
+
+    <!-- Display a message when the user logs out -->
+    <div th:if="${param.logout}" style="color: green;">
+        You have been successfully logged out.
+    </div>
+
+    <!-- Login form -->
+    <form th:action="@{/login}" method="post">
+        <div>
+            <label for="email">Username or Email:</label>
+            <input type="text" id="email" name="email" required autofocus />
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required />
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+
+    <p>Don't have an account? <a th:href="@{/api/users/register}">Register here</a></p>
+</body>
+
+</html>

@@ -7,13 +7,17 @@ import jakarta.persistence.*;
 @Table(name = "app_user")
 public class User {
     @Id
+    @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
 
+    @Column(name = "username", nullable = false)
     private String username;
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+    @Column(name = "passwordHash", nullable = false)
     private String passwordHash;
+    @Column(name = "roles", nullable = false)
     private String roles;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
@@ -61,7 +65,7 @@ public class User {
         return passwordHash;
     }
 
-    public void setPasswordHash(String PasswordHash) {
+    public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
 
@@ -83,7 +87,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [username=" + username + ", email=" + email + ", password=" + passwordHash + ", roles=" + roles
+        return "User [username=" + username + ", email=" + email + ", passwordHash=" + passwordHash + ", roles=" + roles
                 + ", recipes=" + recipes + "]";
     }
 
