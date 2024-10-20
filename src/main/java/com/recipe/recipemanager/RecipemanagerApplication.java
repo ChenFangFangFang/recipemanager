@@ -48,15 +48,16 @@ public class RecipemanagerApplication {
 			}
 
 			Optional<User> existingTestUser = drepository.findByEmail("testuser@example.com");
+			User user2;
 			if (existingTestUser.isEmpty()) {
-				User testUser = new User();
-				testUser.setUsername("testuser");
-				testUser.setEmail("testuser@example.com");
-				testUser.setRoles("ROLE_USER");
-				testUser.setPasswordHash(passwordEncoder.encode("password123"));
-				drepository.save(testUser);
+				user2 = new User();
+				user2.setUsername("testuser");
+				user2.setEmail("testuser@example.com");
+				user2.setRoles("ROLE_USER");
+				user2.setPasswordHash(passwordEncoder.encode("password123"));
+				drepository.save(user2);
 			} else {
-				System.out.println("User with email testuser@example.com already exists");
+				user2 = existingTestUser.get();
 			}
 			Set<Tag> tags = new HashSet<>();
 			tags.add(tag1); // You can add more tags if needed
@@ -68,6 +69,13 @@ public class RecipemanagerApplication {
 					5,
 					tags, user1);
 			repository.save(recipe1);
+			Recipe recipe2 = new Recipe(
+					"User 2New Bread",
+					"a newest bread",
+					LocalDateTime.of(2024, 1, 1, 0, 0),
+					5,
+					tags, user2);
+			repository.save(recipe2);
 		};
 
 	}

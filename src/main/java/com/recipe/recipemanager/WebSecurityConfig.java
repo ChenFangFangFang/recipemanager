@@ -31,7 +31,9 @@ public class WebSecurityConfig {
                 http
                                 .csrf().disable()
                                 .authorizeHttpRequests(authorize -> authorize
-                                                .requestMatchers("/", "/home", "/api/users/register", "/login",
+                                                .requestMatchers("/", "/home", "signup", "/saveuser",
+                                                                "/api/users/register",
+                                                                "/login",
                                                                 "/error", "/favicon.ico") // Allow access to error and
                                                                                           // favicon.ico
                                                 .permitAll()
@@ -39,7 +41,7 @@ public class WebSecurityConfig {
                                 .formLogin(formlogin -> formlogin
                                                 .loginPage("/login")
                                                 .usernameParameter("email")
-                                                .defaultSuccessUrl("/home", true)
+                                                .defaultSuccessUrl("/recipelist", true)
                                                 .permitAll())
                                 .logout(logout -> logout.permitAll());
 
