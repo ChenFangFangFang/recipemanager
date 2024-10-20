@@ -34,14 +34,17 @@ public class WebSecurityConfig {
                                                 .requestMatchers("/", "/home", "signup", "/saveuser",
                                                                 "/api/users/register",
                                                                 "/login",
-                                                                "/error", "/favicon.ico") // Allow access to error and
-                                                                                          // favicon.ico
-                                                .permitAll()
-                                                .anyRequest().authenticated())
+                                                                "/error", "/favicon.ico")
+                                                // can access without auth
+                                                .permitAll()// all users
+                                                .anyRequest().authenticated())// all other pages should auth
                                 .formLogin(formlogin -> formlogin
                                                 .loginPage("/login")
                                                 .usernameParameter("email")
                                                 .defaultSuccessUrl("/recipelist", true)
+                                                // True: This means that no matter what page the user visited before,
+                                                // after a successful login, they will be redirected to /recipelist
+                                                // instead of the page they visited before.
                                                 .permitAll())
                                 .logout(logout -> logout.permitAll());
 
