@@ -19,7 +19,6 @@ import com.recipe.recipemanager.domain.User;
 import com.recipe.recipemanager.domain.UserRepository;
 
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class UserController {
@@ -31,6 +30,11 @@ public class UserController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @GetMapping("/login")
+    public String login() {
+        return "login"; // This will render the login.html in the templates folder
+    }
 
     @RequestMapping(value = "signup", method = RequestMethod.GET)
     public String addUser(Model model) {

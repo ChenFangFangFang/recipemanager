@@ -19,9 +19,6 @@ import java.util.Set;
 
 @SpringBootApplication
 public class RecipemanagerApplication {
-	// private static final Logger log =
-	// LoggerFactory.getLogger(RecipemanagerApplication.class);
-
 	public static void main(String[] args) {
 		SpringApplication.run(RecipemanagerApplication.class, args);
 	}
