@@ -1,6 +1,9 @@
 package com.recipe.recipemanager.domain;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -20,6 +23,7 @@ public class User {
     @Column(name = "roles", nullable = false)
     private String roles;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     // This ensures that removing a Recipe from the recipes list will also delete it
     // from the database if it's no longer associated with any User.

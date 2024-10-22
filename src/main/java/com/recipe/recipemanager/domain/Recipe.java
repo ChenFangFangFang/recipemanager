@@ -17,7 +17,7 @@ public class Recipe {
     // private List<LocalDateTime> useDates; maybe do it in the next iteration
     private int useTimes;
 
-    @ManyToMany(cascade = { CascadeType.MERGE })
+    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     // merge is totally ok, not others!!!!
     @JoinTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();

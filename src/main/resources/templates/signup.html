@@ -16,6 +16,8 @@
         <div>
             <label for="email">Email:</label>
             <input type="email" th:field="*{email}" id="email" />
+            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
         </div>
         <div>
             <label for="password">Password:</label>

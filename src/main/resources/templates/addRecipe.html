@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Recipe</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Add a New Recipe</h1>
+        <form th:action="@{/saverecipe}" th:object="${recipeForm}" method="post" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="title">Recipe Title:</label>
+                <input type="text" th:field="*{title}" class="form-control" placeholder="Enter recipe title" required />
+                <div class="invalid-feedback">Please enter a title.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea th:field="*{description}" class="form-control" rows="3" placeholder="Enter recipe description"
+                    required></textarea>
+                <div class="invalid-feedback">Please enter a description.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="useTimes">Use Times:</label>
+                <input type="number" th:field="*{useTimes}" class="form-control" placeholder="Enter number of use times"
+                    min="1" required />
+                <div class="invalid-feedback">Please enter a valid number of use times.</div>
+            </div>
+            <!-- <div class="form-group">
+                <label for="tags">Select Tags:</label>
+                <select th:field="*{tags}" class="form-control" multiple="multiple" size="4" required>
+                    <option th:each="tag : ${tags}" th:value="${tag.id}" th:text="${tag.name}"></option>
+                </select>
+                <div class="invalid-feedback">Please select at least one tag.</div>
+            </div> -->
+            <div class="form-group">
+                <label for="tags">Select Tags:</label>
+                <select th:field="*{tags}" class="form-control" multiple="multiple" size="4" required>
+                    <option th:each="tag : ${tags}" th:value="${tag.id}"
+                        th:selected="${#lists.contains(recipeForm.tags, tag)}" th:text="${tag.name}"></option>
+                </select>
+                <div class="invalid-feedback">Please select at least one tag.</div>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary btn-block">Save Recipe</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Bootstrap validation
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation');
+                Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+
+</html>

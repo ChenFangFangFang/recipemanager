@@ -13,6 +13,7 @@ import com.recipe.recipemanager.domain.TagRepository;
 import com.recipe.recipemanager.domain.User;
 import com.recipe.recipemanager.domain.UserRepository;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -23,57 +24,73 @@ public class RecipemanagerApplication {
 		SpringApplication.run(RecipemanagerApplication.class, args);
 	}
 
+	// @Bean
+	// public CommandLineRunner demo(RecipeRepository repository, TagRepository
+	// tagRepository,
+	// UserRepository drepository, BCryptPasswordEncoder passwordEncoder) {
+	// return (args) -> {
+	// Tag tag1 = new Tag("Breakfast", new HashSet<>());
+	// tagRepository.save(tag1);
+
+	// Optional<User> existingUser = drepository.findByEmail("1@qq.com");
+	// User user1;
+	// if (existingUser.isEmpty()) {
+	// user1 = new User();
+	// user1.setUsername("newchen");
+	// user1.setEmail("1@qq.com");
+	// user1.setRoles("ROLE_USER");
+	// // Hash the password and set it
+	// user1.setPasswordHash(passwordEncoder.encode("chen"));
+	// drepository.save(user1);
+	// } else {
+	// user1 = existingUser.get();
+	// }
+
+	// Optional<User> existingTestUser =
+	// drepository.findByEmail("testuser@example.com");
+	// User user2;
+	// if (existingTestUser.isEmpty()) {
+	// user2 = new User();
+	// user2.setUsername("testuser");
+	// user2.setEmail("testuser@example.com");
+	// user2.setRoles("ROLE_USER");
+	// user2.setPasswordHash(passwordEncoder.encode("password123"));
+	// drepository.save(user2);
+	// } else {
+	// user2 = existingTestUser.get();
+	// }
+	// Set<Tag> tags = new HashSet<>();
+	// tags.add(tag1); // You can add more tags if needed
+
+	// Recipe recipe1 = new Recipe(
+	// "New Bread",
+	// "a newest bread",
+	// LocalDateTime.of(2024, 1, 1, 0, 0),
+	// 5,
+	// tags, user1);
+	// repository.save(recipe1);
+	// Recipe recipe2 = new Recipe(
+	// "User 2New Bread",
+	// "a newest bread",
+	// LocalDateTime.of(2024, 1, 1, 0, 0),
+	// 5,
+	// tags, user2);
+	// repository.save(recipe2);
+	// };
+
+	// }
 	@Bean
-	public CommandLineRunner demo(RecipeRepository repository, TagRepository tagRepository,
-			UserRepository drepository, BCryptPasswordEncoder passwordEncoder) {
+	public CommandLineRunner setupTags(TagRepository tagRepository) {
 		return (args) -> {
-			Tag tag1 = new Tag("Breakfast", new HashSet<>());
-			tagRepository.save(tag1);
+			if (tagRepository.count() == 0) { // Only insert if there are no tags already
+				Tag tag1 = new Tag("Breakfast", new HashSet<>());
+				Tag tag2 = new Tag("Lunch", new HashSet<>());
+				Tag tag3 = new Tag("Dinner", new HashSet<>());
+				Tag tag4 = new Tag("Snacks", new HashSet<>());
 
-			Optional<User> existingUser = drepository.findByEmail("1@qq.com");
-			User user1;
-			if (existingUser.isEmpty()) {
-				user1 = new User();
-				user1.setUsername("newchen");
-				user1.setEmail("1@qq.com");
-				user1.setRoles("ROLE_USER");
-				// Hash the password and set it
-				user1.setPasswordHash(passwordEncoder.encode("chen"));
-				drepository.save(user1);
-			} else {
-				user1 = existingUser.get();
+				tagRepository.saveAll(Arrays.asList(tag1, tag2, tag3, tag4));
 			}
-
-			Optional<User> existingTestUser = drepository.findByEmail("testuser@example.com");
-			User user2;
-			if (existingTestUser.isEmpty()) {
-				user2 = new User();
-				user2.setUsername("testuser");
-				user2.setEmail("testuser@example.com");
-				user2.setRoles("ROLE_USER");
-				user2.setPasswordHash(passwordEncoder.encode("password123"));
-				drepository.save(user2);
-			} else {
-				user2 = existingTestUser.get();
-			}
-			Set<Tag> tags = new HashSet<>();
-			tags.add(tag1); // You can add more tags if needed
-
-			Recipe recipe1 = new Recipe(
-					"New Bread",
-					"a newest bread",
-					LocalDateTime.of(2024, 1, 1, 0, 0),
-					5,
-					tags, user1);
-			repository.save(recipe1);
-			Recipe recipe2 = new Recipe(
-					"User 2New Bread",
-					"a newest bread",
-					LocalDateTime.of(2024, 1, 1, 0, 0),
-					5,
-					tags, user2);
-			repository.save(recipe2);
 		};
-
 	}
+
 }
