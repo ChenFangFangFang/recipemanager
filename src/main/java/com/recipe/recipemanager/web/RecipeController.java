@@ -7,8 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -87,8 +85,14 @@ public class RecipeController {
     @RequestMapping(value = "/editrecipe/{id}", method = RequestMethod.GET)
     public String editRecipe(@PathVariable("id") Long recipeId, Model model) {
         Optional<Recipe> recipe = recipeRepository.findById(recipeId);
+        System.out.println("Recipe ID: " + recipeId);
+
         if (recipe.isPresent()) {
-            Set<Tag> tags = recipe.get().getTags();
+            Recipe recipeData = recipe.get();
+            Set<Tag> tags = recipeData.getTags();
+
+            System.out.println("Editing Recipe ID: " + recipeId);
+            System.out.println("Recipe Title: " + recipeData.getTitle());
             if (tags != null) {
                 System.out.println("Tags size: " + tags.size());
                 for (Tag tag : tags) {
@@ -106,17 +110,31 @@ public class RecipeController {
     }
 
     @RequestMapping(value = "/updaterecipe", method = RequestMethod.POST)
-    public String updateRecipe(@ModelAttribute("recipeEditForm") Recipe recipe,
+    public String updateRecipe(@RequestParam("id") Long recipeId,
+            @ModelAttribute("recipeEditForm") Recipe recipeForm,
             @RequestParam("tags") List<Long> tagIds,
             Model model) {
-        Set<Tag> tags = new HashSet<>();
-        for (Long tagId : tagIds) {
-            tagRepository.findById(tagId).ifPresent(tags::add);
+        System.out.println("Updating Recipe ID: " + recipeId);
+        System.out.println("Updated Title: " + recipeForm.getTitle());
+        Optional<Recipe> exstingRecipeOpt = recipeRepository.findById(recipeId);
+
+        if (exstingRecipeOpt.isPresent()) {
+            Recipe existingRecipe = exstingRecipeOpt.get();
+            existingRecipe.setTitle(recipeForm.getTitle());
+            existingRecipe.setDescription(recipeForm.getDescription());
+            existingRecipe.setUseTimes(recipeForm.getUseTimes());
+            Set<Tag> tags = new HashSet<>();
+            for (Long tagId : tagIds) {
+                tagRepository.findById(tagId).ifPresent(tags::add);
+            }
+            existingRecipe.setTags(tags);
+            recipeRepository.save(existingRecipe);
+            System.out.println("Recipe updated successfully in database.");
+
+        } else {
+            model.addAttribute("errorMessage", "recipe not found");
+            return "error";
         }
-
-        recipe.setTags(tags); // Assign selected tags to the recipe
-        recipeRepository.save(recipe); // Save the updated recipe
-
         return "redirect:/recipelist"; // Redirect to the recipe list after update
     }
 
@@ -126,19 +144,7 @@ public class RecipeController {
         return recipeRepository.findById(recipeId);
 
     }
-    // @GetMapping("/recipe/{id}")
-    // public ResponseEntity<Recipe> findRecipesRest(@PathVariable("id") Long
-    // recipeId) {
-    // Optional<Recipe> recipe = recipeRepository.findById(recipeId);
 
-    // if (recipe.isPresent()) {
-    // return ResponseEntity.ok(recipe.get()); // Return 200 OK with the Recipe in
-    // the body
-    // } else {
-    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404
-    // Not Found
-    // }
-    // }
     @RequestMapping(value = "/deleterecipe/{id}", method = RequestMethod.POST)
     public String deleteRecipe(@PathVariable("id") Long recipeId, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
