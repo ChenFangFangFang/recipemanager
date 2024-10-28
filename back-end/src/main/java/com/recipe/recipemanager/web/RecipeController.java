@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,13 +33,12 @@ import com.recipe.recipemanager.domain.UserRepository;
 public class RecipeController {
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RecipeRepository recipeRepository;
-
     @Autowired
     private TagRepository tagRepository;
 
+    // homepage
     @GetMapping("/recipelist")
     public String recipeList(Model model) {
         String currentUserEmail = getCurrentUserEmail();
@@ -54,6 +52,7 @@ public class RecipeController {
         }
     }
 
+    // MVC: add a recipe
     @GetMapping("/addrecipe")
     public String addRecipe(Model model) {
         model.addAttribute("tags", tagRepository.findAll());
@@ -61,6 +60,7 @@ public class RecipeController {
         return "addRecipe";
     }
 
+    // save a new recipe
     @RequestMapping(value = "/saverecipe", method = RequestMethod.POST)
     public String saveRecipe(@ModelAttribute("recipeForm") Recipe recipe, Model model,
             @RequestParam("tags") List<Long> tagIds) {
@@ -77,15 +77,14 @@ public class RecipeController {
         for (Long tagId : tagIds) {
             tagRepository.findById(tagId).ifPresent(tags::add); // Fetch each tag by ID and add it to the set
         }
-        recipe.setTags(tags); // Set the tags to the recipe
+        recipe.setTags(tags);
         recipe.setCreatedDate(LocalDateTime.now());
-
-        // Save the recipe
         recipeRepository.save(recipe);
 
         return "redirect:/recipelist";
     }
 
+    // edit a recipe
     @RequestMapping(value = "/editrecipe/{id}", method = RequestMethod.GET)
     public String editRecipe(@PathVariable("id") Long recipeId, Model model) {
         Optional<Recipe> recipe = recipeRepository.findById(recipeId);
@@ -100,16 +99,16 @@ public class RecipeController {
                     System.out.println("Tag: " + tag.getName());
                 }
             }
-
             model.addAttribute("tags", tagRepository.findAll());
             model.addAttribute("recipeEditForm", recipe.get());
-            return "editRecipe"; // Load the edit recipe page
+            return "editRecipe";
         } else {
             model.addAttribute("errorMessage", "Recipe not found");
             return "error";
         }
     }
 
+    // save a update recipe
     @RequestMapping(value = "/updaterecipe", method = RequestMethod.POST)
     public String updateRecipe(@RequestParam("id") Long recipeId,
             @ModelAttribute("recipeEditForm") Recipe recipeForm,
@@ -139,25 +138,14 @@ public class RecipeController {
         return "redirect:/recipelist"; // Redirect to the recipe list after update
     }
 
-    // RESTful service to get recipe by id
-    @RequestMapping(value = "/recipe/{id}", method = RequestMethod.GET)
-    public @ResponseBody Optional<Recipe> findRecipesRest(@PathVariable("id") Long recipeId) {
-        return recipeRepository.findById(recipeId);
-
-    }
-
+    // delete a recipe
     @RequestMapping(value = "/deleterecipe/{id}", method = RequestMethod.POST)
     public String deleteRecipe(@PathVariable("id") Long recipeId, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserEmail = authentication.getName();
-
-        // Fetch the recipe by ID
         Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
-
         if (recipeOptional.isPresent()) {
             Recipe recipe = recipeOptional.get();
-
-            // Check if the logged-in user is the owner of the recipe
             if (recipe.getUser().getEmail().equals(currentUserEmail)) {
                 recipeRepository.delete(recipe);
                 return "redirect:/recipelist";
@@ -171,11 +159,13 @@ public class RecipeController {
         }
     }
 
+    // method
     public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
 
+    // give a random recipe
     @GetMapping("/randomrecipe")
     @ResponseBody
     public ResponseEntity<Recipe> getRandomRecipe() {
@@ -192,9 +182,47 @@ public class RecipeController {
                         .body(null);
             }
         } else {
-            // Handle case where user is not found
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(null);
+        }
+    }
+
+    // RESTful service to get recipe by id
+    // @RequestMapping(value = "/recipe/{id}", method = RequestMethod.GET)
+    // public @ResponseBody Optional<Recipe> findRecipesRest(@PathVariable("id")
+    // Long recipeId) {
+    // return recipeRepository.findById(recipeId);
+
+    // }
+    @GetMapping("/recipe/{id}")
+    public ResponseEntity<?> findRecipesRest(@PathVariable("id") Long recipeId) {
+        Optional<Recipe> recipe = recipeRepository.findById(recipeId);
+
+        if (recipe.isPresent()) {
+            System.out.println("Recipe found: " + recipe.get());
+            return ResponseEntity.ok(recipe.get()); // 200 OK with recipe data
+        } else {
+            System.out.println("Recipe not found for ID: " + recipeId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Recipe not found"); // 404 Not Found
+        }
+    }
+
+    @RequestMapping(value = "/recipes", method = RequestMethod.GET)
+    public ResponseEntity<?> recipeListRest() {
+        String currentUserEmail = getCurrentUserEmail();
+        System.out.println("Current User Email: " + currentUserEmail);
+        Optional<User> user = userRepository.findByEmail(currentUserEmail);
+
+        if (user.isPresent()) {
+            List<Recipe> recipes = recipeRepository.findByUserId(user.get().getId());
+            if (!recipes.isEmpty()) {
+                return ResponseEntity.ok(recipes);
+            } else {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No recipes found for the user.");
+            }
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
 
