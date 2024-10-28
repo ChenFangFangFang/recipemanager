@@ -1,16 +1,16 @@
 package com.recipe.recipemanager.web;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.recipe.recipemanager.domain.Recipe;
-import com.recipe.recipemanager.domain.RecipeRepository;
+import com.mysql.cj.x.protobuf.MysqlxSession.AuthenticateContinue;
 import com.recipe.recipemanager.domain.SignupForm;
 import com.recipe.recipemanager.domain.User;
 import com.recipe.recipemanager.domain.UserRepository;
@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String login() {
-        return "login"; // This will render the login.html in the templates folder
+        return "login";
     }
 
     @RequestMapping(value = "signup", method = RequestMethod.GET)
@@ -74,6 +74,57 @@ public class UserController {
         }
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/profile")
+    public String showProfile(Model model, Authentication authentication) {
+        String currentEmail = authentication.getName();
+        Optional<User> user = repository.findByEmail(currentEmail);
+
+        if (user.isPresent()) {
+            model.addAttribute("user", user.get());
+            return "profile"; // Refers to the profile.html file in the templates folder
+        } else {
+            model.addAttribute("errorMessage", "User not found");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "/updateprofile", method = RequestMethod.GET)
+    public String showUpdateForm(Model model, Authentication authentication) {
+        String currentEmail = authentication.getName();
+        Optional<User> userOpt = repository.findByEmail(currentEmail);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            model.addAttribute("user", user);
+            return "updateProfile";
+        } else {
+            model.addAttribute("errorMessage", "User not found");
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "/saveprofile", method = RequestMethod.POST)
+    public String updateUser(
+            @RequestParam String newUsername,
+            @RequestParam String newPassword,
+            Authentication authentication,
+            Model model) {
+        String currentEmail = authentication.getName();
+        Optional<User> userOpt = repository.findByEmail(currentEmail);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setUsername(newUsername);
+            user.setPasswordHash(passwordEncoder.encode(newPassword));
+            repository.save(user);
+            model.addAttribute("user", user);
+            model.addAttribute("successMessage", "Profile updated successfully");
+            return "profile";
+        } else {
+            model.addAttribute("errorMessage", "User not found");
+            return "error";
+        }
     }
 
 }

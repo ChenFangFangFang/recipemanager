@@ -46,6 +46,7 @@ public class WebSecurityConfig {
                                                 // after a successful login, they will be redirected to /recipelist
                                                 // instead of the page they visited before.
                                                 .permitAll())
+
                                 .logout(logout -> logout.permitAll());
 
                 return http.build();

@@ -4,9 +4,13 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -90,9 +94,6 @@ public class RecipeController {
         if (recipe.isPresent()) {
             Recipe recipeData = recipe.get();
             Set<Tag> tags = recipeData.getTags();
-
-            System.out.println("Editing Recipe ID: " + recipeId);
-            System.out.println("Recipe Title: " + recipeData.getTitle());
             if (tags != null) {
                 System.out.println("Tags size: " + tags.size());
                 for (Tag tag : tags) {
@@ -173,6 +174,28 @@ public class RecipeController {
     public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    @GetMapping("/randomrecipe")
+    @ResponseBody
+    public ResponseEntity<Recipe> getRandomRecipe() {
+        String currentUserEmail = getCurrentUserEmail();
+        Optional<User> user = userRepository.findByEmail(currentUserEmail);
+        if (user.isPresent()) {
+            List<Recipe> recipes = recipeRepository.findByUserId(user.get().getId());
+            if (!recipes.isEmpty()) {
+                Random random = new Random();
+                Recipe randomRecipe = recipes.get(random.nextInt(recipes.size()));
+                return ResponseEntity.ok(randomRecipe);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(null);
+            }
+        } else {
+            // Handle case where user is not found
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(null);
+        }
     }
 
 }

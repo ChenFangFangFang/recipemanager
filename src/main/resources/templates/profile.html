@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Your Profile</h2>
+
+        <div class="mb-3">
+            <label><strong>Email:</strong></label>
+            <span th:text="${user.email}"></span>
+        </div>
+
+        <div class="mb-3">
+            <label><strong>Username:</strong></label>
+            <span th:text="${user.username}"></span>
+        </div>
+
+        <a th:href="@{/updateprofile}" class="btn btn-primary">Change</a>
+        <a class="btn btn-info" th:href="@{/recipelist}">Back to list</a>
+
+    </div>
+</body>
+
+</html>
