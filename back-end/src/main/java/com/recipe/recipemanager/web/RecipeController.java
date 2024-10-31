@@ -187,13 +187,6 @@ public class RecipeController {
         }
     }
 
-    // RESTful service to get recipe by id
-    // @RequestMapping(value = "/recipe/{id}", method = RequestMethod.GET)
-    // public @ResponseBody Optional<Recipe> findRecipesRest(@PathVariable("id")
-    // Long recipeId) {
-    // return recipeRepository.findById(recipeId);
-
-    // }
     @GetMapping("/recipe/{id}")
     public ResponseEntity<?> findRecipesRest(@PathVariable("id") Long recipeId) {
         Optional<Recipe> recipe = recipeRepository.findById(recipeId);

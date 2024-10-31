@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.mysql.cj.x.protobuf.MysqlxSession.AuthenticateContinue;
 import com.recipe.recipemanager.domain.SignupForm;
 import com.recipe.recipemanager.domain.User;
 import com.recipe.recipemanager.domain.UserRepository;
@@ -35,15 +34,6 @@ public class UserController {
         model.addAttribute("signupform", new SignupForm());
         return "signup";
     }
-
-    /**
-     * Create new user
-     * Check if user already exists & form validation
-     * 
-     * @param signupForm
-     * @param bindingResult
-     * @return
-     */
 
     @RequestMapping(value = "saveuser", method = RequestMethod.POST)
     public String save(@Valid @ModelAttribute("signupform") SignupForm signupForm, BindingResult bindingResult,
