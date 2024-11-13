@@ -4,37 +4,112 @@
 <head>
     <title>Update Profile</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* General Body Styling */
+        body {
+            background-color: #f9fafc;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 600px;
+        }
+
+        /* Heading Styling */
+        h2 {
+            font-size: 2rem;
+            color: #333333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Label Styling */
+        label {
+            font-size: 1.1rem;
+            color: #555555;
+        }
+
+        /* Form Group Styling */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        /* Input Styling */
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-left: 10px;
+        }
+
+        /* Success and Error Messages */
+        .alert {
+            font-size: 0.9rem;
+            padding: 10px 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container mt-5">
         <h2>Update Your Profile</h2>
 
-        <form th:action="@{/saveprofile}" method="post">
+        <form th:action="@{/saveprofile}" th:object="${resetPasswordForm}" method="post">
             <!-- Email (Read-only) -->
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" th:value="${user.email}" class="form-control" id="email" readonly />
+                <input type="email" th:field="*{email}" class="form-control" id="email" readonly />
             </div>
 
             <!-- Username -->
             <div class="form-group">
                 <label for="username">New Username:</label>
-                <input type="text" th:value="${user.username}" class="form-control" id="username" name="newUsername"
-                    required />
+                <input type="text" th:field="*{username}" class="form-control" id="username" required />
             </div>
 
-            <!-- Password -->
+            <!-- New Password -->
             <div class="form-group">
-                <label for="password">New Password:</label>
-                <input type="password" class="form-control" id="password" name="newPassword"
+                <label for="newPassword">New Password:</label>
+                <input type="password" th:field="*{newPassword}" class="form-control" id="newPassword"
                     placeholder="Enter new password" required />
             </div>
 
+            <!-- Confirm New Password -->
+            <div class="form-group">
+                <label for="confirmPassword">Confirm New Password:</label>
+                <input type="password" th:field="*{confirmPassword}" class="form-control" id="confirmPassword"
+                    placeholder="Confirm new password" required />
+            </div>
+
+            <!-- Save Changes Button -->
             <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a th:href="@{/recipelist}" class="btn btn-secondary">Cancel</a>
         </form>
 
-        <!-- Success or error message -->
+        <!-- Success or Error Message -->
         <div th:if="${successMessage}" class="alert alert-success mt-3" th:text="${successMessage}"></div>
         <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
     </div>

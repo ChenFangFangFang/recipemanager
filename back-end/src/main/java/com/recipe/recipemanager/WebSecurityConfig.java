@@ -32,7 +32,7 @@ public class WebSecurityConfig {
                                 .csrf().disable()
                                 .authorizeHttpRequests(authorize -> authorize
                                                 .requestMatchers("/", "/home", "signup", "/saveuser",
-                                                                "/api/users/register",
+                                                                "/api/users/register", "/forgot-password",
                                                                 "/login",
                                                                 "/error", "/favicon.ico")
                                                 // can access without auth
