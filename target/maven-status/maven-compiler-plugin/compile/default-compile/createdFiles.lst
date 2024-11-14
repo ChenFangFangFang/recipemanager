@@ -1,0 +1,16 @@
+com/recipe/recipemanager/domain/Recipe.class
+com/recipe/recipemanager/domain/UserRepository.class
+com/recipe/recipemanager/RecipemanagerApplication.class
+com/recipe/recipemanager/web/UserService.class
+com/recipe/recipemanager/domain/TagRepository.class
+com/recipe/recipemanager/web/RecipeController.class
+com/recipe/recipemanager/domain/ResetPasswordForm.class
+com/recipe/recipemanager/web/UserDetailsServiceImpl.class
+com/recipe/recipemanager/web/UserController.class
+com/recipe/recipemanager/domain/ForgotPasswordForm.class
+com/recipe/recipemanager/domain/User.class
+com/recipe/recipemanager/domain/Tag.class
+com/recipe/recipemanager/LocalDateTime.class
+com/recipe/recipemanager/domain/RecipeRepository.class
+com/recipe/recipemanager/WebSecurityConfig.class
+com/recipe/recipemanager/domain/SignupForm.class

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Recipe List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* General Body Styling */
+        body {
+            background-color: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Title Styling */
+        h1 {
+            font-size: 2.5rem;
+            color: #333333;
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
+        /* Custom Random Button */
+        .btn-primary.btn-random {
+            background-color: #e8c280;
+            border-color: #e8c280;
+        }
+
+        /* Table Container Styling */
+        .table-container {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+
+        /* Table Header Styling */
+        .table thead th {
+            background-color: #343a40;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Table Row Hover Effect */
+        .table tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* Badge Styling for Tags */
+        .badge-info {
+            background-color: #4a69bd;
+            color: #ffffff;
+            font-size: 0.85rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* Edit and Delete Button Styling */
+        .btn-sm.btn-warning {
+            background-color: #f39c12;
+            color: #ffffff;
+        }
+
+        .btn-sm.btn-danger {
+            background-color: #e74c3c;
+            color: #ffffff;
+        }
+
+        /* Logout Button Alignment */
+        .logout-btn {
+            font-size: 0.9rem;
+            position: absolute;
+            right: 15px;
+            top: 20px;
+        }
+
+        /* Info Text Styling */
+        #recipe-info {
+            color: #007bff;
+            font-style: italic;
+        }
+
+        /* Adjust Button Layout */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+    </style>
+
+
+</head>
+<script>
+    async function getRandomRecipe() {
+        try {
+            const response = await fetch('/randomrecipe');
+
+            if (response.ok) {
+                const recipe = await response.json();
+                document.getElementById('recipe-info').textContent =
+                    `Title: ${recipe.title}, Description: ${recipe.description}`;
+            } else {
+                document.getElementById('recipe-info').textContent = 'No recipes found or an error occurred.';
+            }
+        } catch (error) {
+            document.getElementById('recipe-info').textContent = 'Error fetching recipe.';
+        }
+    }
+</script>
+
+<body>
+    <div class="container mt-5">
+        <!-- Logout Button Positioned on the Right -->
+        <a class="btn btn-secondary logout-btn" th:href="@{/logout}">Logout</a>
+
+        <h1 class="text-center mb-4">Recipe List</h1>
+
+        <!-- Button Container -->
+        <div class="button-container mb-3">
+            <div>
+                <a class="btn btn-primary" th:href="@{/addrecipe}">Add Recipe</a>
+                <button class="btn btn-primary btn-random" onclick="getRandomRecipe()">Random Recipe</button>
+                <a class="btn btn-info" th:href="@{/profile}">Profile</a>
+            </div>
+
+        </div>
+
+        <p id="recipe-info" class="text-info font-italic"></p>
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <table class="table table-bordered table-hover mt-3">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Use Times</th>
+                        <th>Created Date</th>
+                        <th>Tags</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through recipes -->
+                    <tr th:each="recipe : ${recipes}">
+                        <td th:text="${recipe.title}"></td>
+                        <td th:text="${recipe.description}"></td>
+                        <td th:text="${recipe.useTimes}"></td>
+                        <td th:text="${recipe.createdDate?.toLocalDate()}"></td>
+                        <td>
+                            <span th:each="tag : ${recipe.tags ?: {}}" class="badge badge-info mr-1"
+                                th:text="${tag.name ?: 'No Tags'}"></span>
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-warning" th:href="@{'/editrecipe/' + ${recipe.id}}">Edit</a>
+                            <form th:action="@{'/deleterecipe/' + ${recipe.id}}" method="post"
+                                onsubmit="return confirm('Are you sure you want to delete this recipe?');"
+                                class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+
+</html>
