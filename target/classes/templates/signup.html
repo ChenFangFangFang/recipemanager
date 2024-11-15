@@ -103,20 +103,25 @@
         <form th:action="@{/saveuser}" method="post" th:object="${signupform}">
             <div>
                 <label for="username">Username:</label>
-                <input type="text" th:field="*{username}" id="username" />
+                <input type="text" th:field="*{username}" id="username" placeholder="Enter your username" />
+                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error-message"></div>
             </div>
             <div>
                 <label for="email">Email:</label>
-                <input type="email" th:field="*{email}" id="email" />
+                <input type="email" th:field="*{email}" id="email" placeholder="Enter your email" />
                 <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></div>
             </div>
             <div>
                 <label for="password">Password:</label>
-                <input type="password" th:field="*{password}" id="password" />
+                <input type="password" th:field="*{password}" id="password" placeholder="Enter your password" />
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></div>
             </div>
             <div>
                 <label for="passwordCheck">Confirm Password:</label>
-                <input type="password" th:field="*{passwordCheck}" id="passwordCheck" />
+                <input type="password" th:field="*{passwordCheck}" id="passwordCheck"
+                    placeholder="Re-enter your password" />
+                <div th:if="${#fields.hasErrors('passwordCheck')}" th:errors="*{passwordCheck}" class="error-message">
+                </div>
             </div>
             <div>
                 <button type="submit">Sign up</button>

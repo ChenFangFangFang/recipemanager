@@ -18,13 +18,8 @@ public class Recipe {
     private int useTimes;
 
     @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
-    // merge is totally ok, not others!!!!
     @JoinTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();
-
-    // @ManyToMany(cascade = CascadeType.MERGE) // Ensure tags are attached before
-    // persisting recipe
-    // private Set<Tag> tags = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -38,12 +38,11 @@ public class RecipeController {
     @Autowired
     private TagRepository tagRepository;
 
-    // homepage
     @GetMapping({ "/recipelist" })
     public String recipeList(Model model) {
         String currentUserEmail = getCurrentUserEmail();
         if (currentUserEmail == null) {
-            return "redirect:/login"; // Redirect to login if no email is found
+            return "redirect:/login";
         }
         Optional<User> user = userRepository.findByEmail(currentUserEmail);
         if (user.isPresent()) {
@@ -60,7 +59,6 @@ public class RecipeController {
         return "redirect:/recipelist";
     }
 
-    // MVC: add a recipe
     @GetMapping("/addrecipe")
     public String addRecipe(Model model) {
         model.addAttribute("tags", tagRepository.findAll());

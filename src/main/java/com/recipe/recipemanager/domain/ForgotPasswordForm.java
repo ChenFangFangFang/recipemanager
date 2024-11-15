@@ -18,7 +18,6 @@ public class ForgotPasswordForm {
     @Size(min = 7, max = 30)
     private String confirmPassword;
 
-    // Getters and Setters
     public String getEmail() {
         return email;
     }
