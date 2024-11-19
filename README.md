@@ -1,4 +1,4 @@
-### Project Description: Family Recipe Manager
+# Family Recipe Manager
 ### Render Deployment  
 The application is deployed on Render and can be accessed at:  
 [Recipe Manager - Render Deployment](https://recipemanager-fcvn.onrender.com/recipelist)
