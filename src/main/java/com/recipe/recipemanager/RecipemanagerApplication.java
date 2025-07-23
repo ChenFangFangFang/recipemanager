@@ -4,8 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import com.recipe.recipemanager.domain.Tag;
-import com.recipe.recipemanager.domain.TagRepository;
+import com.recipe.recipemanager.entity.Tag;
+import com.recipe.recipemanager.repository.TagRepository;
 import java.util.Arrays;
 import java.util.HashSet;
 

@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.recipe.recipemanager.domain.Tag;
-import com.recipe.recipemanager.domain.TagRepository;
+import com.recipe.recipemanager.entity.Tag;
+import com.recipe.recipemanager.repository.TagRepository;
 
 import java.util.List;
 

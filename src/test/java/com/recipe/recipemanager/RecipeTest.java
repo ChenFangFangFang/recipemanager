@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.recipe.recipemanager.domain.Recipe;
-import com.recipe.recipemanager.domain.RecipeRepository;
-import com.recipe.recipemanager.domain.TagRepository;
-import com.recipe.recipemanager.domain.UserRepository;
+import com.recipe.recipemanager.entity.Recipe;
+import com.recipe.recipemanager.repository.RecipeRepository;
+import com.recipe.recipemanager.repository.TagRepository;
+import com.recipe.recipemanager.repository.UserRepository;
 
 @SpringBootTest
 public class RecipeTest {
