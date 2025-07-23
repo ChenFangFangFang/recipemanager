@@ -28,7 +28,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+target/
+**/target/
 # Spring Boot specific
 application-*.properties
 !application.properties

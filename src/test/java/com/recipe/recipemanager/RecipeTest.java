@@ -23,9 +23,9 @@ public class RecipeTest {
 
     @Test
     public void findByTitleShouldReturnRecipe() {
-        List<Recipe> recipes = recipeRepository.findByTitle("title2 - new");
+        List<Recipe> recipes = recipeRepository.findByTitle("title4 - new");
         assertThat(recipes).hasSize(1);
-        assertThat(recipes.get(0).getTitle()).isEqualTo("title2 - new");
+        assertThat(recipes.get(0).getTitle()).isEqualTo("title4 - new");
     }
 
 }
