@@ -8,8 +8,12 @@ import java.util.Set;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +23,6 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private Set<Recipe> recipes = new HashSet<>();
 
-    public Tag() {
-    }
 
     public Tag(String name, Set<Recipe> recipes) {
         this.name = name;
@@ -53,7 +55,7 @@ public class Tag {
 
     @Override
     public String toString() {
-        return "Tag [name=" + name + ", recipes=" + recipes + "]";
+        return "[recipes=" + recipes + "]";
     }
 
 }

@@ -1,36 +1,113 @@
 package com.recipe.recipemanager.service;
 
-import java.util.Optional;
-
+import com.recipe.recipemanager.dto.UserResponseDTO;
+import com.recipe.recipemanager.exception.InvalidCredentialsException;
+import com.recipe.recipemanager.exception.PasswordMissmatchException;
+import com.recipe.recipemanager.exception.UserExitsException;
+import com.recipe.recipemanager.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.recipe.recipemanager.entity.User;
 import com.recipe.recipemanager.repository.UserRepository;
 
+import java.util.List;
+
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    public User registerUser(String username, String email, String password) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (user == null) throw new UsernameNotFoundException(email);
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
+                .password(user.getPasswordHash())
+                .authorities("ROLE_" + user.getRole().name())
+                .build();
+    }
+    public UserResponseDTO convertToDTO(User user){
+        UserResponseDTO responseDTO = new UserResponseDTO();
+        responseDTO.setId(user.getId());
+        responseDTO.setEmail(user.getEmail());
+        return responseDTO;
+    }
+    public UserResponseDTO signUp(String email, String password, String confirmPassword){
+        if (email== null || password == null || confirmPassword==null || email.isBlank() || password.isBlank() || confirmPassword.isBlank()){
+           throw new IllegalArgumentException("The email or password should not be empty");
+        }
+        if(userRepository.existsByEmail(email)){
+            throw new UserExitsException(email);
+        }
+        if (!password.equals(confirmPassword)){
+            throw new PasswordMissmatchException();
+        }
+        String hashedPassword = passwordEncoder.encode(password);
         User user = new User();
-        user.setUsername(username);
         user.setEmail(email);
-        String encodedPassword = passwordEncoder.encode(password);
+        user.setPasswordHash(hashedPassword);
+        user.setRole(User.Role.USER);
+        User saved = userRepository.save(user);
+        return convertToDTO(saved);
+    }
+    public UserResponseDTO login(String email, String password) {
+        if (email== null || password == null || email.isBlank() || password.isBlank()){
+            throw new IllegalArgumentException("The email or password should not be empty");
+        }
+        User user = userRepository.findByEmail(email);
+        if (user == null){
+            throw new UserNotFoundException(email);
+        }
+        if (!passwordEncoder.matches(password,user.getPasswordHash())){
+            throw new InvalidCredentialsException();
+        }
 
-        user.setPasswordHash(encodedPassword);
-        user.setRoles("ROLE_USER"); // Default role
+        return convertToDTO(user);
+    }
+    public UserResponseDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null){
+            throw new UserNotFoundException(email);
+        }
 
-        return userRepository.save(user);
+        return convertToDTO(user);
+    }
+    public List<UserResponseDTO> getAllUsers(){
+        return userRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .toList();
+    }
+    public UserResponseDTO resetPassword(String email, String password, String confirmPassword){
+        if (email== null || password == null || confirmPassword==null || email.isBlank() || password.isBlank() || confirmPassword.isBlank()){
+            throw new IllegalArgumentException("The email or password should not be empty");
+        }
+        User user = userRepository.findByEmail(email);
+        if(user == null){
+            throw new UserNotFoundException(email);
+        }
+        if (!password.equals(confirmPassword)){
+            throw new PasswordMissmatchException();
+        }
+        String hashedPassword = passwordEncoder.encode(password);
+        user.setPasswordHash(hashedPassword);
+        User saved = userRepository.save(user);
+        return convertToDTO(saved);
     }
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
+
+
 }

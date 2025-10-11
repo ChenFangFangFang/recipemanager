@@ -5,18 +5,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotEmpty
     private String title;
     private String description;
     private LocalDateTime createdDate;
-    // private List<LocalDateTime> useDates; maybe do it in the next iteration
-    private int useTimes;
+    private Long useTimes;
 
     @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(name = "recipe_tags", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
@@ -26,12 +30,8 @@ public class Recipe {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Recipe() {
-
-    }
-
     public Recipe(String title, String description, LocalDateTime createdDate,
-            int useTimes, Set<Tag> tags, User user) {
+                  Long useTimes, Set<Tag> tags, User user) {
         this.title = title;
         this.description = description;
         this.createdDate = createdDate;
@@ -40,66 +40,11 @@ public class Recipe {
         this.user = user;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public int getUseTimes() {
-        return useTimes;
-    }
-
-    public void setUseTimes(int useTimes) {
-        this.useTimes = useTimes;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
-    }
 
     @Override
     public String toString() {
         return "Recipe [title=" + title + ", description=" + description + ", createdDate=" + createdDate
-                + ", useTimes=" + useTimes + ", tags=" + tags + "]";
+                + ", useTimes=" + useTimes + "]";
     }
 
 }
