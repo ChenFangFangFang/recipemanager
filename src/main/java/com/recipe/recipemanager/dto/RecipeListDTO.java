@@ -3,6 +3,7 @@ package com.recipe.recipemanager.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 public class RecipeListDTO {
@@ -11,6 +12,6 @@ public class RecipeListDTO {
     private String description;
     private LocalDateTime createdDate;
     private Long useTimes;
-    private String userEmail;
     private Long userId;
+    private Set<String> tagName;
 }

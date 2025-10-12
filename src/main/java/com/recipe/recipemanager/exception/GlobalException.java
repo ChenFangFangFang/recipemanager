@@ -80,5 +80,12 @@ public class GlobalException {
                 .detail("Please check your input data")
                 .build();
     }
+    @ExceptionHandler(RecipeNotFoundException.class)
+    public ErrorResponse handleRecipeNotFound(RecipeNotFoundException e){
+        return ErrorResponse.builder(e, HttpStatus.NOT_FOUND,e.getMessage())
+                .title("The recipe is not found")
+                .detail(e.getMessage())
+                .build();
+    }
 
 }

@@ -3,7 +3,7 @@ POST http://localhost:8080/api/user/signup
 Content-Type: application/json
 
 {
-  "email": "test2@example.com",
+  "email": "test@example.com",
   "password": "password123",
   "confirmPassword": "password123"
 }
@@ -13,7 +13,7 @@ POST http://localhost:8080/api/user/login
 Content-Type: application/json
 
 {
-  "email": "test2@example.com",
+  "email": "test@example.com",
   "password": "password123"
 }
 
@@ -23,3 +23,28 @@ GET http://localhost:8080/api/user/list
 ###
 POST http://localhost:8080/api/user/logout
 
+###
+POST http://localhost:8080/api/recipes
+Content-Type: application/json
+
+{
+  "title": "testing2",
+  "description": "description2",
+  "tagName": ["tag2","tag1"]
+}
+
+###
+GET http://localhost:8080/api/recipes
+
+###
+PATCH http://localhost:8080/api/recipes/2
+Content-Type: application/json
+
+{
+  "title": "testing2-new",
+  "description": "description2-new",
+  "tagName": ["tag2"]
+}
+
+###
+DELETE http://localhost:8080/api/recipes/2

@@ -6,6 +6,8 @@ import com.recipe.recipemanager.exception.PasswordMissmatchException;
 import com.recipe.recipemanager.exception.UserExitsException;
 import com.recipe.recipemanager.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -106,6 +108,14 @@ public class UserService implements UserDetailsService {
         user.setPasswordHash(hashedPassword);
         User saved = userRepository.save(user);
         return convertToDTO(saved);
+    }
+    public User getCurrentUserByEmail(String email){
+        User user = userRepository.findByEmail(email);
+        if (user == null){
+            throw new UserNotFoundException(email);
+        }
+        return user;
+
     }
 
 
