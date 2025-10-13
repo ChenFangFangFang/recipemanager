@@ -44,5 +44,21 @@ public class RecipeController {
         RecipeListDTO updatedRecipe = recipeService.updateRecipe(id,dto);
         return ResponseEntity.ok(updatedRecipe);
     }
+    @PostMapping("/{id}/increment-usage")
+    public ResponseEntity<RecipeListDTO> increaseUsage(@PathVariable Long id){
+        RecipeListDTO updatedRecipe = recipeService.incrementUseTimes(id);
+        return ResponseEntity.ok(updatedRecipe);
+    }
+    @PostMapping("/{id}/decrement-usage")
+    public ResponseEntity<RecipeListDTO> decreaseUsage(@PathVariable Long id){
+        RecipeListDTO updatedRecipe = recipeService.decrementUseTimes(id);
+        return ResponseEntity.ok(updatedRecipe);
+    }
+    @GetMapping("/my/by-tag")
+    public ResponseEntity<List<RecipeListDTO>> getMyRecipesByTag(
+            @RequestParam String tagName) {
+        List<RecipeListDTO> recipes = recipeService.getRecipeByTagName(tagName);
+        return ResponseEntity.ok(recipes);
+    }
 
 }

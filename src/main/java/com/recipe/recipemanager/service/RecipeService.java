@@ -110,6 +110,40 @@ public class RecipeService {
         Recipe updatedRecipe = recipeRepository.save(recipe);
         return convertToDTO(updatedRecipe);
     }
+    public RecipeListDTO incrementUseTimes(Long id){
+        Recipe recipe = recipeRepository.findById(id).orElseThrow(RecipeNotFoundException::new);
+        User currentUser = getCurrentUser();
+        if (!recipe.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You can only delete your own recipes");
+        }
+        recipe.setUseTimes(recipe.getUseTimes()+1);
+        Recipe updatedRecipe = recipeRepository.save(recipe);
+        return convertToDTO(updatedRecipe);
+    }
+    public RecipeListDTO decrementUseTimes(Long id){
+        Recipe recipe = recipeRepository.findById(id).orElseThrow(RecipeNotFoundException::new);
+        User currentUser = getCurrentUser();
+        if (!recipe.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You can only delete your own recipes");
+        }
+        Long currentUseTimes = recipe.getUseTimes();
+        if (currentUseTimes > 0) {
+            recipe.setUseTimes(currentUseTimes - 1);
+        }
+        Recipe updatedRecipe = recipeRepository.save(recipe);
+        return convertToDTO(updatedRecipe);
+    }
+    public List<RecipeListDTO> getRecipeByTagName(String tagName){
+        if (tagName == null || tagName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tag name cannot be empty");
+        }
+        User currentUser = getCurrentUser();
+        return recipeRepository.findByTagName(tagName.trim())
+                .stream()
+                .filter(recipe -> recipe.getUser().getId().equals(currentUser.getId()))
+                .map(this::convertToDTO)
+                .toList();
+    }
     private Set<Tag> processTags(Set<String> tagNames){
         if (tagNames == null || tagNames.isEmpty()) {
             return new HashSet<>();
