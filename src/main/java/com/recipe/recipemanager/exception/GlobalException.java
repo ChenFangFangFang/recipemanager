@@ -87,5 +87,12 @@ public class GlobalException {
                 .detail(e.getMessage())
                 .build();
     }
+    @ExceptionHandler(RecipeIsEmptyException.class)
+    public ErrorResponse RecipeIsEmptyException(RecipeIsEmptyException e){
+        return ErrorResponse.builder(e, HttpStatus.NOT_FOUND,e.getMessage())
+                .title("No recipe")
+                .detail(e.getMessage())
+                .build();
+    }
 
 }

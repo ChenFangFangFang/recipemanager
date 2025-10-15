@@ -28,9 +28,8 @@ POST http://localhost:8080/api/recipes
 Content-Type: application/json
 
 {
-  "title": "testing2",
-  "description": "description2",
-  "tagName": ["tag2","tag1"]
+  "title": "testing3",
+  "description": "description3"
 }
 
 ###
@@ -41,9 +40,8 @@ PATCH http://localhost:8080/api/recipes/2
 Content-Type: application/json
 
 {
-  "title": "testing2-new",
-  "description": "description2-new",
-  "tagName": ["tag2"]
+  "title": "testing3",
+  "description": "description3"
 }
 
 ###
@@ -54,3 +52,6 @@ POST http://localhost:8080/api/recipes/3/increment-usage
 
 ###
 GET http://localhost:8080/api/recipes/my/by-tag?tagName=tag2
+
+###
+GET http://localhost:8080/api/recipes/random

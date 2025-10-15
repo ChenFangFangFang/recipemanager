@@ -7,8 +7,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +27,7 @@ public class RecipeController {
     }
     @GetMapping
     public ResponseEntity<List<RecipeListDTO>> getAllRecipe(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        List<RecipeListDTO> recipes = recipeService.getAllListByUser(email);
+        List<RecipeListDTO> recipes = recipeService.getAllListByUser();
         return ResponseEntity.ok(recipes);
     }
     @DeleteMapping("/{id}")
@@ -59,6 +55,11 @@ public class RecipeController {
             @RequestParam String tagName) {
         List<RecipeListDTO> recipes = recipeService.getRecipeByTagName(tagName);
         return ResponseEntity.ok(recipes);
+    }
+    @GetMapping("/random")
+    public ResponseEntity<RecipeListDTO> getRandomRecipe(){
+        RecipeListDTO recipe = recipeService.getRandomRecipe();
+        return ResponseEntity.ok(recipe);
     }
 
 }

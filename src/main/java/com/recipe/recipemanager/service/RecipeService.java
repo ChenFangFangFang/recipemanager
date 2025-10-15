@@ -5,6 +5,7 @@ import com.recipe.recipemanager.dto.RecipeListDTO;
 import com.recipe.recipemanager.entity.Recipe;
 import com.recipe.recipemanager.entity.Tag;
 import com.recipe.recipemanager.entity.User;
+import com.recipe.recipemanager.exception.RecipeIsEmptyException;
 import com.recipe.recipemanager.exception.RecipeNotFoundException;
 import com.recipe.recipemanager.exception.UserNotFoundException;
 import com.recipe.recipemanager.repository.RecipeRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,12 +67,9 @@ public class RecipeService {
         return convertToDTO(recipe);
 
     }
-    public List<RecipeListDTO> getAllListByUser(String email){
-        User user = userRepository.findByEmail(email);
-        if (user== null){
-            throw new UserNotFoundException(email);
-        }
-        return recipeRepository.findByUserId(user.getId())
+    public List<RecipeListDTO> getAllListByUser(){
+        User currentUser = getCurrentUser();
+        return recipeRepository.findByUserId(currentUser.getId())
                 .stream()
                 .map(this::convertToDTO)
                 .toList();
@@ -143,6 +142,17 @@ public class RecipeService {
                 .filter(recipe -> recipe.getUser().getId().equals(currentUser.getId()))
                 .map(this::convertToDTO)
                 .toList();
+    }
+    public RecipeListDTO getRandomRecipe(){
+       User currentUser = getCurrentUser();
+        Random random = new Random();
+        List<Recipe> recipes = recipeRepository.findByUserId(currentUser.getId());
+        if (recipes==null || recipes.isEmpty()){
+            throw new RecipeIsEmptyException();
+        }
+            Recipe randomRecipe = recipes.get(random.nextInt(recipes.size()));
+            return convertToDTO(randomRecipe);
+
     }
     private Set<Tag> processTags(Set<String> tagNames){
         if (tagNames == null || tagNames.isEmpty()) {
