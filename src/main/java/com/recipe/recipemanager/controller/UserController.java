@@ -1,9 +1,6 @@
 package com.recipe.recipemanager.controller;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.recipe.recipemanager.dto.UserLoginDTO;
 import com.recipe.recipemanager.dto.UserResponseDTO;
@@ -15,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -56,19 +52,11 @@ public class UserController {
                             userLoginDTO.getEmail(),
                             userLoginDTO.getPassword()
                     )
-            );
-            // Create and set security context
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            );SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
             securityContext.setAuthentication(authentication);
             SecurityContextHolder.setContext(securityContext);
-
-            // Save to session using SecurityContextRepository
             securityContextRepository.saveContext(securityContext, request, response);
-
-            System.out.println("=== LOGIN SUCCESS ===");
-            System.out.println("Session ID: " + request.getSession().getId());
-            System.out.println("Authentication saved: " + authentication.getName());
-            System.out.println("===================");
+            userService.recordLoginActivity(userLoginDTO.getEmail());
             UserResponseDTO user = userService.getUserByEmail(userLoginDTO.getEmail());
             return ResponseEntity.ok().body(user);
         } catch (Exception e) {
@@ -77,37 +65,28 @@ public class UserController {
     System.out.println("Message: " + e.getMessage());
     throw e;
 }
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            userService.recordLogoutActivity(email);
+            SecurityContextHolder.clearContext();
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+
+            return ResponseEntity.ok("Logout successfully");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No login");
 
     }
     @GetMapping("/list")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers(){
         List<UserResponseDTO> users = userService.getAllUsers();
         return ResponseEntity.ok().body(users);
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request, HttpServletResponse response){
-        System.out.println("\n=== LOGOUT REQUEST RECEIVED ===");
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = (auth != null && auth.isAuthenticated()) ? auth.getName() : "anonymous";
-
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            System.out.println("Invalidating session: " + session.getId());
-            session.invalidate();
-        }
-
-        SecurityContextHolder.clearContext();
-
-        System.out.println("=== LOGOUT COMPLETE ===\n");
-        // Return structured response
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("message", "Logged out successfully");
-        responseBody.put("user", username);
-        responseBody.put("timestamp", LocalDateTime.now());
-
-        return ResponseEntity.ok(responseBody);
     }
 }

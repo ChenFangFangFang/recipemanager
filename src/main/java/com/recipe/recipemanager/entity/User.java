@@ -39,10 +39,6 @@ public class User {
         this.passwordHash = passwordHash;
 
     }
-
-
-
-
     @Override
     public String toString() {
         return "User [email=" + email + "]";
